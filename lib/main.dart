@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:aichat/components/HideKeyboard.dart';
 import 'package:aichat/page/AppOpenPage.dart';
-import 'package:aichat/screens/chat_screen.dart';
 import 'package:aichat/stores/AIChatStore.dart';
 import 'package:flutter/material.dart';
 import 'package:aichat/utils/Chatgpt.dart';

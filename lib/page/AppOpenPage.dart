@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:aichat/pdf_screens/bottomnavigationbar.dart';
 import 'package:aichat/utils/Utils.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
@@ -37,7 +38,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
       if (status == AnimationStatus.completed) {
         _lottieController.stop();
         _showAppOpenAnimate = false;
-        Utils.pushReplacement(context, const HomePage());
+        Utils.pushReplacement(context, const Bottomnavigationbar());
       }
     });
     _splashLottie = Lottie.asset(

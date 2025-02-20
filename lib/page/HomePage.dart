@@ -2,7 +2,8 @@ import 'package:aichat/components/QuestionInput.dart';
 import 'package:aichat/page/ChatHistoryPage.dart';
 import 'package:aichat/page/ChatPage.dart';
 import 'package:aichat/page/SettingPage.dart';
-import 'package:aichat/screens/chat_screen.dart';
+import 'package:aichat/pdf_screens/bottomnavigationbar.dart';
+import 'package:aichat/pdf_screens/chat_screen.dart';
 import 'package:aichat/utils/Chatgpt.dart';
 import 'package:aichat/utils/Config.dart';
 import 'package:aichat/utils/Time.dart';
@@ -145,9 +146,7 @@ class _HomePageState extends State<HomePage> {
                             onTap: () {
                               Utils.jumpPage(context, const ChatHistoryPage());
                             },
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
+                            child: Column(
                               children: [
                                 const Text(
                                   'All',
@@ -175,22 +174,6 @@ class _HomePageState extends State<HomePage> {
                         store.homeHistoryList,
                       ),
                     _renderTitle('Chat Model'),
-                   Padding(
-                     padding: const EdgeInsets.only(left: 20,right: 20),
-                     child: InkWell(
-                       highlightColor: Colors.transparent,
-                       splashColor: Colors.transparent,
-                       onTap: () {
-                         Navigator.push(context, MaterialPageRoute(builder: (context)=> ChatScreen()));
-                       },
-                       child: Container(
-                         width: 400,
-                         height: 100,
-                         color: Color.fromRGBO(229, 245, 244, 1),
-                         child: Center(child: Text('PDF chat',style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 20),),),
-                       ),
-                     ),
-                   ),
                     _renderChatModelListWidget(),
                   ],
                 ),

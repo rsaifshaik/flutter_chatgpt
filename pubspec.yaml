@@ -11,8 +11,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  file_picker: ^8.1.7
+  pdf: ^3.11.2
+  flutter_pdfview: ^1.4.0
+  path_provider: ^2.1.5
+  file_picker: ^8.3.5
   webview_flutter: ^4.10.0
+  webview_flutter_wkwebview: ^3.18.0
+  webview_flutter_android: ^4.3.2
   syncfusion_flutter_pdf: ^28.1.41
   google_mobile_ads: ^5.3.0
   cupertino_icons: ^1.0.5
@@ -49,5 +54,7 @@ flutter:
     - assets/mario.jpg
     - assets/mine game.jpg
     - assets/monster game.jpg
+    - assets/snake game.jpg
+    - assets/Question Construction.jpg
     - images/
     - .env
