@@ -30,7 +30,8 @@ class ChatPage extends StatefulWidget {
 enum TtsState { playing, stopped, paused, continued }
 
 class _ChatPageState extends State<ChatPage> {
-  static final LottieBuilder _generatingLottie = Lottie.asset("images/loading2.json");
+  static final LottieBuilder _generatingLottie =
+      Lottie.asset("images/loading2.json");
 
   final ScrollController _listController = ScrollController();
 
@@ -251,7 +252,8 @@ class _ChatPageState extends State<ChatPage> {
                     currentState.questionController.text = tip;
                     currentState.focusNode.requestFocus();
                     currentState.questionController.selection =
-                        TextSelection.fromPosition(TextPosition(offset: tip.length));
+                        TextSelection.fromPosition(
+                            TextPosition(offset: tip.length));
                     setState(() {});
                   }
                 }

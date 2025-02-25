@@ -440,6 +440,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  font_awesome_flutter:
+    dependency: "direct main"
+    description:
+      name: font_awesome_flutter
+      sha256: d3a89184101baec7f4600d58840a764d2ef760fe1c5a20ef9e6b0e9b24a07a3a
+      url: "https://pub.dev"
+    source: hosted
+    version: "10.8.0"
   frontend_server_client:
     dependency: transitive
     description:
@@ -896,6 +904,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.1"
+  side_sheet:
+    dependency: "direct main"
+    description:
+      name: side_sheet
+      sha256: "3c46b88c01a741126129b9f6c9f5a7e0b97728ab78617ff4997a61f6a7629e25"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.4"
   sky_engine:
     dependency: transitive
     description: flutter

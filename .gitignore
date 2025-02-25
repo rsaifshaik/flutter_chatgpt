@@ -47,3 +47,9 @@ app.*.map.json
 
 .env
 /linux
+firebase.json
+android/app/google-services (7).json
+android/app/google-services.json
+android/app/google-services (7).json
+android/app/google-services.json
+lib/firebase_options.dart

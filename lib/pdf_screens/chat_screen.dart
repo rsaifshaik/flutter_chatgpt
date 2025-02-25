@@ -1,6 +1,14 @@
 import 'package:aichat/pdf_screens/webview_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:aichat/utils/pdf_utils.dart';
+import 'package:provider/provider.dart';
+import 'package:side_sheet/side_sheet.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import '../page/ChatPage.dart';
+import '../stores/AIChatStore.dart';
+import '../utils/Time.dart';
+import '../utils/Utils.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -10,6 +18,8 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  // Add this new state variable at the top with other state variables
+  bool showingGameHistory = false;
   String? pdfFileName;
   bool isLoading = false;
   final ScrollController _scrollController = ScrollController();
@@ -22,7 +32,6 @@ class _ChatScreenState extends State<ChatScreen> {
   bool postGameQuestionsAnswered = false;
   bool chatEnded = false; // Track if all questions are completed
 
-
   int questionIndex = 0;
   bool showInitialOptions = true;
 
@@ -34,15 +43,24 @@ class _ChatScreenState extends State<ChatScreen> {
       "question": "Welcome to the PDF Chat! How are you feeling today?",
     },
     {
-      "question": "Thanks for sharing! Would you like to try something new today?",
-      "options": ["Yes, show me new things!", "I’m looking for something specific", "I just want to relax"]
+      "question":
+          "Thanks for sharing! Would you like to try something new today?",
+      "options": [
+        "Yes, show me new things!",
+        "I’m looking for something specific",
+        "I just want to relax"
+      ]
     },
     {
       "question": "What interests you the most these days?",
     },
     {
-      "question": "Hey there! Would you like to upload a PDF so I can assist you better?",
-      "options": ["Yes, I have a PDF to upload", "No, I just want to ask general questions"]
+      "question":
+          "Hey there! Would you like to upload a PDF so I can assist you better?",
+      "options": [
+        "Yes, I have a PDF to upload",
+        "No, I just want to ask general questions"
+      ]
     },
     {
       "question": "Upload your PDF now",
@@ -59,7 +77,12 @@ class _ChatScreenState extends State<ChatScreen> {
     },
     {
       "question": "What type of games do you enjoy the most?",
-      "options": ["Puzzle games", "Adventure games", "Strategy games", "Casual games"]
+      "options": [
+        "Puzzle games",
+        "Adventure games",
+        "Strategy games",
+        "Casual games"
+      ]
     },
     {
       "question": "Would you like to try a new game recommendation?",
@@ -73,7 +96,10 @@ class _ChatScreenState extends State<ChatScreen> {
     },
     {
       "question": "Did you feel that Good Game Theory is interesting?",
-      "options": ["Yes, it helps in understanding strategic decision-making", "Maybe, I need to explore more"]
+      "options": [
+        "Yes, it helps in understanding strategic decision-making",
+        "Maybe, I need to explore more"
+      ]
     },
   ];
 
@@ -116,7 +142,8 @@ class _ChatScreenState extends State<ChatScreen> {
         conversation.add({
           "text": nextQuestion["question"],
           "isUser": false,
-          if (nextQuestion.containsKey("options")) "options": nextQuestion["options"],
+          if (nextQuestion.containsKey("options"))
+            "options": nextQuestion["options"],
         });
       } else {
         conversation.add({
@@ -131,7 +158,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void processQuestionResponse(String answer) {
-    if (chatEnded) return;  // Prevent further processing if chat is ended
+    if (chatEnded) return; // Prevent further processing if chat is ended
 
     setState(() {
       conversation.add({"text": answer, "isUser": true});
@@ -143,11 +170,13 @@ class _ChatScreenState extends State<ChatScreen> {
         conversation.add({
           "text": nextQuestion["question"],
           "isUser": false,
-          if (nextQuestion.containsKey("options")) "options": nextQuestion["options"],
+          if (nextQuestion.containsKey("options"))
+            "options": nextQuestion["options"],
         });
 
         // ✅ Unlock PDF upload when reaching the last question (without options)
-        if (questionIndex == initialQuestions.length - 1 && !nextQuestion.containsKey("options")) {
+        if (questionIndex == initialQuestions.length - 1 &&
+            !nextQuestion.containsKey("options")) {
           questionsCompleted = true;
           showInitialOptions = false;
         }
@@ -158,9 +187,8 @@ class _ChatScreenState extends State<ChatScreen> {
       }
     });
 
-    _scrollToBottom();  // Ensure smooth scrolling
+    _scrollToBottom(); // Ensure smooth scrolling
   }
-
 
   void processUploadQuestionResponse(String answer) {
     if (chatEnded) return;
@@ -173,7 +201,8 @@ class _ChatScreenState extends State<ChatScreen> {
         conversation.add({
           "text": nextQuestion["question"],
           "isUser": false,
-          if (nextQuestion.containsKey("options")) "options": nextQuestion["options"],
+          if (nextQuestion.containsKey("options"))
+            "options": nextQuestion["options"],
         });
       } else {
         showGameOptions = true;
@@ -184,7 +213,6 @@ class _ChatScreenState extends State<ChatScreen> {
           "isUser": false
         });
       }
-
     });
     _scrollToBottom();
   }
@@ -243,15 +271,16 @@ class _ChatScreenState extends State<ChatScreen> {
       List<Map<String, dynamic>> currentQuestions = showUploadQuestions
           ? uploadQuestions
           : showGameOptions
-          ? postGameQuestions
-          : initialQuestions;
+              ? postGameQuestions
+              : initialQuestions;
 
       if (questionIndex < currentQuestions.length) {
         var nextQuestion = currentQuestions[questionIndex];
         conversation.add({
           "text": nextQuestion["question"],
           "isUser": false,
-          if (nextQuestion.containsKey("options")) "options": nextQuestion["options"],
+          if (nextQuestion.containsKey("options"))
+            "options": nextQuestion["options"],
         });
 
         // ✅ Unlock PDF Upload when reaching last initial question
@@ -264,7 +293,10 @@ class _ChatScreenState extends State<ChatScreen> {
           showUploadQuestions = false;
         } else if (showGameOptions) {
           chatEnded = true;
-          conversation.add({"text": "Thanks for participating! Hope you had fun!", "isUser": false});
+          conversation.add({
+            "text": "Thanks for participating! Hope you had fun!",
+            "isUser": false
+          });
         } else {
           showUploadQuestions = true;
         }
@@ -273,8 +305,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
     _scrollToBottom();
   }
-
-
 
   Widget buildOptions(
       List<String> options, Function(String) onSelect, int questionIndex) {
@@ -320,6 +350,212 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  Future<void> _showDeleteConfirmationDialog(
+    BuildContext context,
+    String chatId,
+  ) async {
+    final store = Provider.of<AIChatStore>(context, listen: false);
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm deletion?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+            TextButton(
+              child: const Text('Confirm'),
+              onPressed: () async {
+                await store.deleteChatById(chatId);
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _genChatItemWidget(Map chat, {bool isLastInGroup = false}) {
+    return InkWell(
+      highlightColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      onTap: () {
+        final store = Provider.of<AIChatStore>(context, listen: false);
+        store.fixChatList();
+        Utils.jumpPage(
+          context,
+          ChatPage(
+            chatId: chat['id'],
+            autofocus: false,
+            chatType: chat['ai']['type'],
+          ),
+        );
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 12),
+          Container(
+            decoration: BoxDecoration(
+              color: Color.fromARGB(33, 255, 255, 255),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(width: 20),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        chat['messages'][0]['content'],
+                        softWrap: true,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          height: 24 / 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete, size: 22),
+                  color: const Color.fromARGB(255, 255, 255, 255),
+                  onPressed: () {
+                    _showDeleteConfirmationDialog(context, chat['id']);
+                  },
+                ),
+              ],
+            ),
+          ),
+          // const SizedBox(height: 12),
+          if (isLastInGroup) ...[
+            const SizedBox(height: 16), // Added spacing before divider
+            const Divider(
+              height: 2,
+              color: Color.fromRGBO(166, 166, 166, 1.0),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _renderChatListWidget(List chatList) {
+    final store = Provider.of<AIChatStore>(context, listen: false);
+    final groupedChats = store.getGroupedChatList();
+
+    return Expanded(
+      child: ListView(
+        shrinkWrap: true,
+        children: groupedChats.entries.map((entry) {
+          if (entry.value.isEmpty) return const SizedBox.shrink();
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Text(
+                  entry.key,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              ...entry.value.asMap().entries.map((chatEntry) {
+                final isLastInGroup = chatEntry.key == entry.value.length - 1;
+                return _genChatItemWidget(chatEntry.value,
+                    isLastInGroup: isLastInGroup);
+              }).toList(),
+              const SizedBox(height: 16),
+            ],
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  GestureDetector buildSideSheet(BuildContext context, List<dynamic> chatList) {
+    return GestureDetector(
+      onTap: () {
+        SideSheet.left(
+          sheetColor: Color.fromARGB(255, 43, 131, 218),
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextButton.icon(
+                    style: const ButtonStyle(
+                      padding: WidgetStatePropertyAll(EdgeInsets.zero),
+                    ),
+                    onPressed: () {},
+                    icon: const FaIcon(
+                      FontAwesomeIcons.gamepad,
+                      color: Colors.white,
+                    ),
+                    label: const Text(
+                      "Gameyoutube",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  TextButton.icon(
+                    style: const ButtonStyle(
+                      padding: WidgetStatePropertyAll(EdgeInsets.zero),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        showingGameHistory = true;
+                      });
+                    },
+                    icon: const FaIcon(
+                      FontAwesomeIcons.clockRotateLeft,
+                      color: Colors.white,
+                    ),
+                    label: const Text(
+                      "Game History",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  const Divider(),
+                  const SizedBox(height: 8),
+                  const Text(
+                    "History",
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                  _renderChatListWidget(chatList),
+                ],
+              ),
+            ),
+          ),
+          context: context,
+        );
+      },
+      child: const Icon(Icons.menu_rounded),
+    );
+  }
+
   void _handleGameSelection(String url) async {
     if (url.isEmpty) {
       print("Error: Invalid URL");
@@ -334,8 +570,6 @@ class _ChatScreenState extends State<ChatScreen> {
     // Ask post-game questions after returning
     askPostGameQuestions();
   }
-
-
 
   Widget buildGameOptions() {
     List<Map<String, String>> games = [
@@ -360,19 +594,23 @@ class _ChatScreenState extends State<ChatScreen> {
       {
         "name": "Classic MCQ",
         "url": "https://www.gameyoutube.com/",
-        "description": 'Challenge yourself with classic multiple-choice quizzes',
+        "description":
+            'Challenge yourself with classic multiple-choice quizzes',
         "image": 'assets/classic mcq.jpg'
       },
       {
         "name": "Snake Game",
-        "url": "https://dev-game-yt.vercel.app/snakegame/DHjqpvDnNGE/mcqs/easy/fb4fbcefe833aec9b26a0b7702264ffcc020f7c2eda9c07bdeac997728543851/",
+        "url":
+            "https://dev-game-yt.vercel.app/snakegame/DHjqpvDnNGE/mcqs/easy/fb4fbcefe833aec9b26a0b7702264ffcc020f7c2eda9c07bdeac997728543851/",
         "description": 'Test your knowledge by playing the snake game!',
         "image": 'assets/snake game.jpg'
       },
       {
         "name": "Question Construction",
-        "url": "https://dev-game-yt.vercel.app/questionconstruction/DHjqpvDnNGE/tfs/easy/fb4fbcefe833aec9b26a0b7702264ffcc020f7c2eda9c07bdeac997728543851",
-        "description": 'Challenge yourself with classic multiple-choice quizzes',
+        "url":
+            "https://dev-game-yt.vercel.app/questionconstruction/DHjqpvDnNGE/tfs/easy/fb4fbcefe833aec9b26a0b7702264ffcc020f7c2eda9c07bdeac997728543851",
+        "description":
+            'Challenge yourself with classic multiple-choice quizzes',
         "image": 'assets/Question Construction.jpg'
       },
     ];
@@ -419,7 +657,6 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: GestureDetector(
                   key: ValueKey(games[index]["image"]),
                   onTap: () => _handleGameSelection(games[index]["url"]!),
-
                   child: Card(
                     elevation: 5.0,
                     shape: RoundedRectangleBorder(
@@ -474,10 +711,147 @@ class _ChatScreenState extends State<ChatScreen> {
     super.dispose();
   }
 
+  // Replace buildSideSheet with buildDrawer
+  Widget buildDrawer(BuildContext context, List<dynamic> chatList) {
+    return Drawer(
+      backgroundColor: Color.fromARGB(255, 43, 131, 218),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: showingGameHistory
+              ? _buildGameHistoryView(chatList)
+              : _buildDefaultDrawerView(chatList),
+        ),
+      ),
+    );
+  }
+
+  // Add this new method for default drawer view
+  Widget _buildDefaultDrawerView(List<dynamic> chatList) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextButton.icon(
+          style: const ButtonStyle(
+            padding: WidgetStatePropertyAll(EdgeInsets.zero),
+          ),
+          onPressed: () {},
+          icon: const FaIcon(
+            FontAwesomeIcons.gamepad,
+            color: Colors.white,
+          ),
+          label: const Text(
+            "Gameyoutube",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+            ),
+          ),
+        ),
+        TextButton.icon(
+          style: const ButtonStyle(
+            padding: WidgetStatePropertyAll(EdgeInsets.zero),
+          ),
+          onPressed: () {
+            setState(() {
+              showingGameHistory = true;
+            });
+          },
+          icon: const FaIcon(
+            FontAwesomeIcons.clockRotateLeft,
+            color: Colors.white,
+          ),
+          label: const Text(
+            "Game History",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+            ),
+          ),
+        ),
+        const Divider(color: Colors.white54),
+        const SizedBox(height: 8),
+        const Text(
+          "History",
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        _renderChatListWidget(chatList),
+      ],
+    );
+  }
+
+  // Add this new method for game history view
+  Widget _buildGameHistoryView(List<dynamic> chatList) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () {
+                setState(() {
+                  showingGameHistory = false;
+                });
+              },
+            ),
+            const Text(
+              "Game History",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Expanded(
+          child: ListView.builder(
+            itemCount: chatList.length,
+            itemBuilder: (context, index) {
+              final chat = chatList[index];
+              return Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(33, 255, 255, 255),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ListTile(
+                  title: Text(
+                    chat['messages'][0]['content'],
+                    style: const TextStyle(
+                      color: Colors.white,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  trailing: const Icon(
+                    Icons.sports_esports,
+                    color: Colors.white,
+                  ),
+                  onTap: () {
+                    // Handle game history item tap
+                  },
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Update the build method to use Drawer
   @override
   Widget build(BuildContext context) {
+    final store = Provider.of<AIChatStore>(context, listen: true);
+
     return Scaffold(
       backgroundColor: Colors.white,
+      drawer: buildDrawer(context, store.sortChatList),
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text("PDF Chat",
@@ -517,14 +891,15 @@ class _ChatScreenState extends State<ChatScreen> {
                               conversation[index].containsKey("options"))
                             buildOptions(conversation[index]["options"],
                                 (answer) {
-                                  if (showInitialOptions) {
-                                    processQuestionResponse(answer);
-                                  } else if (showUploadQuestions) {
-                                    processUploadQuestionResponse(answer);
-                                  } else {
-                                    processPostGameQuestionResponse(answer); // Handle post-game questions
-                                  }
-                                }, index),
+                              if (showInitialOptions) {
+                                processQuestionResponse(answer);
+                              } else if (showUploadQuestions) {
+                                processUploadQuestionResponse(answer);
+                              } else {
+                                processPostGameQuestionResponse(
+                                    answer); // Handle post-game questions
+                              }
+                            }, index),
                           // Show game options if it's the last question
                           if (showGameOptions &&
                               conversation[index]['text'] ==

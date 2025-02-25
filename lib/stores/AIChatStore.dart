@@ -181,4 +181,31 @@ chat
       notifyListeners();
     }
   }
+
+  Map<String, List> getGroupedChatList() {
+    Map<String, List> groupedChats = {
+      'Today': [],
+      'Last 7 Days': [],
+      'Older': []
+    };
+
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final sevenDaysAgo = today.subtract(const Duration(days: 7));
+
+    for (var chat in sortChatList) {
+      final chatDate = DateTime.fromMillisecondsSinceEpoch(chat['updatedTime']);
+      final chatDay = DateTime(chatDate.year, chatDate.month, chatDate.day);
+
+      if (chatDay == today) {
+        groupedChats['Today']!.add(chat);
+      } else if (chatDay.isAfter(sevenDaysAgo)) {
+        groupedChats['Last 7 Days']!.add(chat);
+      } else {
+        groupedChats['Older']!.add(chat);
+      }
+    }
+
+    return groupedChats;
+  }
 }
